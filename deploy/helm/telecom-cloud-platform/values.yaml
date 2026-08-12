@@ -1,0 +1,24 @@
+replicaCount: 2
+
+image:
+  repository: philiphabib/telecom-cloud-platform
+  tag: f4c9deb
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+
+ingress:
+  enabled: true
+  className: nginx
+  host: telecom-api.lab.local
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
