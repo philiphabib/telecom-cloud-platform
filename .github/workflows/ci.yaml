@@ -9,18 +9,20 @@ on:
       - main
 
 jobs:
+
   test:
     name: Run Tests
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+          cache: "pip"
 
       - name: Install dependencies
         run: |
@@ -32,6 +34,7 @@ jobs:
         run: |
           pytest -v backend/tests
 
+
   docker:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
@@ -42,7 +45,7 @@ jobs:
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
