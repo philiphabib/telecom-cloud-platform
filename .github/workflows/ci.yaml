@@ -9,7 +9,6 @@ on:
       - main
 
 jobs:
-
   test:
     name: Run Tests
     runs-on: ubuntu-latest
@@ -32,7 +31,6 @@ jobs:
       - name: Run tests
         run: |
           pytest -v backend/tests
-
 
   docker:
     name: Build and Push Docker Image
