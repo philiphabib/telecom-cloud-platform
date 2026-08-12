@@ -9,6 +9,7 @@ on:
       - main
 
 jobs:
+
   test:
     name: Run Tests
     runs-on: ubuntu-latest
@@ -32,17 +33,37 @@ jobs:
         run: |
           pytest -v backend/tests
 
+
   docker:
-    name: Build Docker Image
+    name: Build and Push Docker Image
     runs-on: ubuntu-latest
     needs: test
+
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
 
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set image tag
+        id: image
+        run: |
+          echo "tag=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
       - name: Build Docker image
         run: |
           docker build \
-            -t philiphabib/telecom-cloud-platform:${{ github.sha }} \
+            -t philiphabib/telecom-cloud-platform:${{ steps.image.outputs.tag }} \
             .
+
+      - name: Push Docker image
+        run: |
+          docker push \
+            philiphabib/telecom-cloud-platform:${{ steps.image.outputs.tag }}
