@@ -1,4 +1,4 @@
-name: Telecom Cloud Platform CI
+name: Telecom Cloud Platform CI/CD
 
 on:
   push:
@@ -68,3 +68,45 @@ jobs:
         run: |
           docker push \
             philiphabib/telecom-cloud-platform:${{ steps.image.outputs.tag }}
+
+
+  update-helm:
+    name: Update Helm Image Tag
+    runs-on: ubuntu-latest
+    needs: docker
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Update Helm image tag
+        run: |
+          TAG="${GITHUB_SHA::7}"
+
+          sed -i "s/^  tag:.*/  tag: ${TAG}/" \
+            deploy/helm/telecom-cloud-platform/values.yaml
+
+          echo "Updated Helm image tag to: ${TAG}"
+
+          grep -n -A4 "^image:" \
+            deploy/helm/telecom-cloud-platform/values.yaml
+
+      - name: Commit Helm update
+        run: |
+          TAG="${GITHUB_SHA::7}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add deploy/helm/telecom-cloud-platform/values.yaml
+
+          git diff --cached --quiet && \
+            echo "No Helm changes to commit." && exit 0
+
+          git commit -m "Update Telecom Cloud Platform image to ${TAG}"
+          git push
