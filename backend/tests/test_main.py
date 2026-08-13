@@ -22,3 +22,9 @@ def test_ready():
     response = client.get("/ready")
     assert response.status_code == 200
     assert response.json()["status"] == "ready"
+
+def test_metrics():
+    response = client.get("/metrics")
+
+    assert response.status_code == 200
+    assert "telecom_api_requests_total" in response.text
