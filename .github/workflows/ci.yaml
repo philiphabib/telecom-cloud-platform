@@ -108,5 +108,5 @@ jobs:
           git diff --cached --quiet && \
             echo "No Helm changes to commit." && exit 0
 
-          git commit -m "Update Telecom Cloud Platform image to ${TAG}"
+          git commit -m "Update Telecom Cloud Platform image to ${TAG} [skip ci]"
           git push
