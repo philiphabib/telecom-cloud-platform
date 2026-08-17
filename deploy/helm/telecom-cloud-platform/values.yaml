@@ -2,7 +2,7 @@ replicaCount: 2
 
 image:
   repository: philiphabib/telecom-cloud-platform
-  tag: a9854fe
+  tag: 815f415
   pullPolicy: IfNotPresent
 
 service:
