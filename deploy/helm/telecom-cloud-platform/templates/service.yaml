@@ -2,12 +2,14 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "telecom-cloud-platform.fullname" . }}
+  labels:
+    app: {{ include "telecom-cloud-platform.fullname" . }}
 spec:
   type: {{ .Values.service.type }}
-  selector:
-    app: {{ include "telecom-cloud-platform.fullname" . }}
   ports:
     - name: http
       port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.targetPort }}
       protocol: TCP
+  selector:
+    app: {{ include "telecom-cloud-platform.fullname" . }}

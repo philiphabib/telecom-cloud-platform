@@ -1,0 +1,16 @@
+{{- if .Values.monitoring.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "telecom-cloud-platform.fullname" . }}
+  labels:
+    app: {{ include "telecom-cloud-platform.fullname" . }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "telecom-cloud-platform.fullname" . }}
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+{{- end }}
