@@ -5,6 +5,7 @@ metadata:
   name: {{ include "telecom-cloud-platform.fullname" . }}
   labels:
     app: {{ include "telecom-cloud-platform.fullname" . }}
+    release: monitoring
 spec:
   selector:
     matchLabels:
