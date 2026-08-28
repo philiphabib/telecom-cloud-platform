@@ -1,5 +1,11 @@
-from fastapi import FastAPI, Response
-from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
+from fastapi import FastAPI, Response, Request
+from prometheus_client import (
+    Counter,
+    Histogram,
+    generate_latest,
+    CONTENT_TYPE_LATEST,
+)
+import time
 
 app = FastAPI(
     title="Telecom Cloud Platform",
@@ -12,6 +18,28 @@ REQUEST_COUNT = Counter(
     "Total number of API requests",
     ["method", "endpoint"],
 )
+
+REQUEST_LATENCY = Histogram(
+    "telecom_api_request_duration_seconds",
+    "HTTP request duration in seconds",
+    ["method", "endpoint"],
+)
+
+
+@app.middleware("http")
+async def metrics_middleware(request: Request, call_next):
+    start_time = time.perf_counter()
+
+    response = await call_next(request)
+
+    duration = time.perf_counter() - start_time
+
+    REQUEST_LATENCY.labels(
+        method=request.method,
+        endpoint=request.url.path,
+    ).observe(duration)
+
+    return response
 
 
 @app.get("/")
